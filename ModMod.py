@@ -5,6 +5,8 @@ Created on Wed Sep  4 17:02:17 2019
 
 @author: jac
 
+With modifications of jdmolina
+
 ModMod, an environment for coding Modular models:
 Define, debug and Run dynamic models on many modules with several variables
 
@@ -152,18 +154,37 @@ class Var:
         indx = arange( i - self.rec + 1, i + 1, step=1)
         return self.rec_val[indx]
     
-    def Integral( self, n=0, t=0):
-        """Return integral removing the first n recorded values."""
+    def Integral( self, ni=0, nf=None, t=None, Dn=1, g=(lambda x : x) ):
+        """
+        Return the integral of the variable evaluated in the function g, 
+        between its registers ni+1 to nf, with jumps Dn. 
+        t is an array that contains all the times in which 
+        there are measurements of the variable. 
+        Dn is an integer >=1, so the finest possible integration is the one 
+        that is done over all the times measurements were taken.
+        By default the function g is the identity. To redefine it, it is 
+        recommended to use the structure of the lambda function, 
+        for example, if we want to consider g(x) = x**2, 
+        the argument to be introduced is g = (lambda x : x**2).
+        Note: An easy way to get t is with the method 
+        "OutTime" of the "Director" class.
+        """
         val = self.GetRecord()
-        if t == 0:
-            return sum(val[(n+1):]) ## Simple sum
-        else:
-            return sum(val[(n+1):]*diff(t)[n:]) ## Integral with t
-    
-    def Mean( self, n=0):
-        """Return the mean of the recorded values."""
+        if t is not None: ## This is the case with time information
+            return sum( g(val)[(ni+1):nf][::Dn] * diff(t)[ni:nf][::Dn] ) ## It's returned the integral over time t, with jumps Dn
+        else: ## This is the case without time information
+            return sum( g(val)[(ni+1):nf][::Dn] ) ## It's returned the simple sum with jumps Dn.
+        
+    def Mean( self, ni=0, nf=None, g=(lambda x : x) ):
+        """Return the mean of the variable evaluated in the function g, 
+        between its registers ni to nf.
+         By default the function g is the identity. To redefine it, it is 
+        recommended to use the structure of the lambda function, 
+        for example, if we want to consider g(x) = x**2, 
+        the argument to be introduced is g = (lambda x : x**2).
+        """
         val = self.GetRecord()
-        return mean(val)
+        return mean( g(val)[ni:nf] )
 
 
 
@@ -1072,4 +1093,10 @@ class Director:
         """
         par = self.save.index(varid)
         return self.Output[:,1+par]
+    
+    def OutTime( self ):
+        """
+        Returns an array with all the times in which ModMod runed
+        """
+        return self.Output[:,0]
 
