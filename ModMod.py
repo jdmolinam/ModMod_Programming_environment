@@ -22,7 +22,7 @@ from sys import exc_info
 from numpy import zeros, arange, diff, mean, array, arange, append
 from pylab import plot, xlabel, ylabel, title
 from sympy import latex, symbols, simplify
-
+from tqdm import  tqdm
 from pandas import read_excel
 
 from numpy import format_float_scientific
@@ -1063,10 +1063,13 @@ class Director:
                    """
         return array([self.Vars[varid].val for varid in ids])
 
-    def Run( self, Dt, n, sch, save=None):
+
+    def Run( self, Dt, n, sch, save = None, active = True):
         """Advance in Dt time steps, n steps with the scheduling sch.
            Save the variables with varid's in save.  Defualt: all State variables.
         """
+        from functools import partialmethod
+        tqdm.__init__ = partialmethod(tqdm.__init__, disable=not(active))
         if save == None:
             self.save = list(self.VarClas['State'])
         else:
@@ -1075,10 +1078,12 @@ class Director:
         self.Output = zeros(( n, 1+len(self.save)))
         self.Output[0,0] = self.t ## Initial time
         self.Output[0,1:] = self.VarToArray( self.save)
-        for i, t1 in enumerate(trange):
-            self.Scheduler(t1, sch)
-            self.Output[i,0] = self.t
-            self.Output[i,1:] = self.VarToArray( self.save)
+        with tqdm(total=n, position=0) as pbar:
+            for i, t1 in enumerate(trange):
+                self.Scheduler(t1, sch)
+                self.Output[i,0] = self.t
+                self.Output[i,1:] = self.VarToArray( self.save)
+                pbar.update(1) 
         return self.save
 
     def PlotVar( self, varid):
