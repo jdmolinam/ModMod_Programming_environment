@@ -1024,13 +1024,15 @@ class Director:
            Define the sheduling list self.sch previously:
         """
         self.t = self.master_dir.t  ##Will fail if not in master mode
+        advances = list()
         for mod in self.sch:
-            if self.Modules[mod].Advance(t1) != 1:
+            #breakpoint()
+            advances.append(self.Modules[mod].Advance(t1))
+            if all(advances) != True:
                 print("Slave Dir %s: Error in Advancing Module '%s' from time %f to time %f"\
                       % ( self.name, mod, self.master_dir.t, t1))
                 return 0
-            else:
-                return 1
+        return 1
         
         
     
