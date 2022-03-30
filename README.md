@@ -9,7 +9,7 @@ To install the module as any other python module:
 sudo python3 setup.py install
 ``
 
-(is a pure Python module and therefore is platform independent), or directly from this repository:
+(is a pure Python module and therefore is platform independent), or directly from this repository using `pip`:
 
 ``
 pip install git+https://github.com/jdmolinam/ModMod_Programming_environment.git
