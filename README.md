@@ -13,6 +13,7 @@ sudo python3 setup.py install
 
 ``
 pip install git+https://github.com/jdmolinam/ModMod_Programming_environment.git
+``
 
 
 
