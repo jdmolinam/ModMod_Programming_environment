@@ -19,7 +19,7 @@ To do list:
 """
 from sys import exc_info
 
-from numpy import zeros, arange, diff, mean, array, arange, append
+from numpy import zeros, arange, diff, mean, array, append
 from pylab import plot, xlabel, ylabel, title
 from sympy import latex, symbols, simplify
 from tqdm import  tqdm
@@ -148,12 +148,19 @@ class Var:
     def __str__(self):
         return str_ScientificNotation( self.val, precision=self.prnpres)
 
-    def GetRecord(self):
-        """Return record."""
+    def GetRecord(self, ind_get=None):
+        """
+        Return record.
+        ind_get is an array (or a single integer value) containing 
+        the list of indices the record wants to know about.
+        """
         i = (self.ncalls % self.rec) #Current index to use, record is circular
         indx = arange( i - self.rec + 1, i + 1, step=1)
-        return self.rec_val[indx]
-    
+        if ind_get is not None: # In this case with get records only for indices containing in ind_get 
+            return self.rec_val[indx][ind_get]
+        else: # In this case we get all the records
+            return self.rec_val[indx]
+        
     def Integral( self, ni=0, nf=None, t=None, Dn=1, g=(lambda x : x) ):
         """
         Return the integral of the variable evaluated in the function g, 
@@ -586,10 +593,18 @@ class Module:
     def V( self, varid):
         """Get value of variable.  Short for:"""
         return self.D.Vars[varid].val
+    
+    def V_Int( self, varid, ni=0, nf=None, t=None, Dn=1, g=(lambda x : x) ):
+        """Get the integral of a variable.  Short for:"""
+        return self.D.Vars[varid].Integral(ni, nf, t, Dn, g)
 
-    def V_Mean( self, varid):
+    def V_Mean( self, varid, ni=0, nf=None, g=(lambda x : x) ):
         """Get mean value of variable.  Short for:"""
-        return self.D.Vars[varid].Mean()
+        return self.D.Vars[varid].Mean(ni, nf, g )
+    
+    def V_GetRec(self, varid, ind_get=None):
+        """Get record values of a variable.  Short for:"""
+        return self.D.Vars[varid].GetRecord(ind_get)
 
     def V_Set( self, varid, val):
         """Set value of variable.  Short for:"""
@@ -1064,7 +1079,7 @@ class Director:
         return array([self.Vars[varid].val for varid in ids])
 
 
-    def Run( self, Dt, n, sch, save = None, active = True):
+    def Run( self, Dt, n, sch, save = None, active = False):
         """Advance in Dt time steps, n steps with the scheduling sch.
            Save the variables with varid's in save.  Defualt: all State variables.
         """
