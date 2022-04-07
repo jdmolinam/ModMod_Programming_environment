@@ -666,7 +666,7 @@ class Module:
         return self.F        
         
 
-    def AdvanceRungeKutta( self, t1, Method=4):
+    def AdvanceRungeKutta( self, t1, Method=4, t0=None):
         """
         Rugge-Kutta type ODE solver, of dX/dt = F( X, t, args), X(t0) = X0 (array length q)
         Solution for X(t1).  The time step to be use is less but as close as possible
@@ -685,12 +685,14 @@ class Module:
       
         The whole methods description may be seen in RungueKutta.RKcoef .
         """
+        if t0 == None:
+            t0 = self.t()
 
         self.SetX() # Set the initial value (current) of state variables
 
         ### This creates a set of times knots, that terminates in t1 with
         ### step = self.Dt
-        tt = append( arange( self.t(), t1, step=self.Dt), [t1])
+        tt = append( arange( t0, t1, step=self.Dt), [t1])
         
         n = len(tt)  ### Number of time steps
     
