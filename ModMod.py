@@ -121,6 +121,12 @@ class Var:
         i = (self.ncalls % self.rec) #Index to use, record is circular
         self.rec_val[i] = val
 
+    def Reset(self):
+        self.val = self.init_val
+        self.ncalls = 0 #NUmber of actualizations
+        self.rec_val = zeros(self.rec)
+        self.rec_val[0] = self.val
+
     def Set_Cnts( self, val):
         """Will trigger an error if attempting to change a Cnts variable."""
         raise Exception("Var.Set: Attempting to change a 'Cnts' constant Var!") 
@@ -561,6 +567,11 @@ class Module:
         self.Assigm_S_RHS_ids = list(self.Assigm_StateRHSs.keys())
         self.Assigm_q = 0
 
+    def ResetVars(self):
+        Vars = list(self.Vars.keys())
+        for v in Vars:
+            self.Vars[v].Reset()
+
     def SetDirector( self, Director):
         self.D = Director
         self.Init()
@@ -798,6 +809,9 @@ class ReadModule(Module):
             vk = self.GetVal(vid)
             self.D.Vars[vid].Set( vk_1 + (t1-tk_1)*((vk-vk_1)/(tk-tk_1)) )
         return 1
+
+    def ResetVars(self):
+        return super().ResetVars()
 
 
 class Director:
@@ -1117,10 +1131,25 @@ class Director:
         """
         par = self.save.index(varid)
         return self.Output[:,1+par]
+
     
     def OutTime( self ):
         """
         Returns an array with all the times in which ModMod runed
         """
         return self.Output[:,0]
+
+
+    def Reset(self):
+        modules = list(self.Modules.keys())
+        for m in modules:
+            self.Modules[m].ResetVars()
+
+
+    def ResetVars(self):
+        """Polymorphic method to be able to treat a director, with possible many modules,
+           as one module.
+           This methods resets local and global variables. 
+        """
+        self.Reset()
 
