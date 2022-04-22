@@ -571,6 +571,13 @@ class Module:
         Vars = list(self.Vars.keys())
         for v in Vars:
             self.Vars[v].Reset()
+        RHSs = self.StateRHSs
+        if len(RHSs) != 0:
+            self.X = zeros(self.q)
+            self.F = zeros(self.q)
+            for varid in self.S_RHS_ids:
+                self.k[varid] = 0.0
+
 
     def SetDirector( self, Director):
         self.D = Director
