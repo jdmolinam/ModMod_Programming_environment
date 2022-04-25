@@ -569,16 +569,15 @@ class Module:
         self.Assigm_q = 0
 
     def ResetVars(self):
-        Vars = list(self.Vars.keys())
+        Vars = list(self.D.Vars.keys())
         for v in Vars:
-            self.Vars[v].Reset()
+            self.D.Vars[v].Reset()
         RHSs = self.StateRHSs
         if len(RHSs) != 0:
             self.X = zeros(self.q)
             self.F = zeros(self.q)
             for varid in self.S_RHS_ids:
                 self.k[varid] = 0.0
-
 
     def SetDirector( self, Director):
         self.D = Director
@@ -1160,4 +1159,14 @@ class Director:
            This methods resets local and global variables. 
         """
         self.Reset()
-
+        Vars = list(self.Vars.keys())
+        for v in Vars:
+            self.Vars[v].Reset()
+        Modules = list(self.Modules.keys())
+        for m in Modules:
+            RHSs = self.Modules[m].StateRHSs
+            if len(RHSs) != 0:
+                self.X = zeros(self.q)
+                self.F = zeros(self.q)
+                for varid in self.S_RHS_ids:
+                    self.k[varid] = 0.0
