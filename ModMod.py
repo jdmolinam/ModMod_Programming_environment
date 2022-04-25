@@ -103,6 +103,7 @@ class Var:
             self.symb_units = None
             self.units = units
         self.val = val #Current value
+        self.init_val = val
         self.ncalls = 0 #NUmber of actualizations
         self.rec = rec
         self.rec_val = zeros(self.rec)
