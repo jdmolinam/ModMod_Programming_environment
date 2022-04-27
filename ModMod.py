@@ -800,7 +800,7 @@ class ReadModule(Module):
     def GetVal( self, vid, s=0):
         """Get the current value, for row self.input_vars.loc[vid,'time_index'] + s,
            in the Director units."""
-        vraw = self.data[self.input_vars.loc[vid,'Sheet']].loc[ self.input_vars.loc[vid,'time_index']+s, + self.shift_time \
+        vraw = self.data[self.input_vars.loc[vid,'Sheet']].loc[ self.input_vars.loc[vid,'time_index']+s + self.shift_time, \
                        self.input_vars.loc[vid,'Column']]
         return self.input_vars.loc[vid,'Column_conv']*(vraw - self.input_vars.loc[vid,'Column_conv_shift'])
     
