@@ -765,7 +765,7 @@ class Module:
 
 
 class ReadModule(Module):
-    def __init__( self, fnam, t_conv_shift, t_conv):
+    def __init__( self, fnam, t_conv_shift, t_conv, shift_time=0):
         """Read the Excel file fnam to update a series a Var's accordingly."""
 
         ### Dt is ignored
@@ -784,6 +784,7 @@ class ReadModule(Module):
         ### How to convert the data base time to the Director units
         self.tconv_a = t_conv_shift
         self.tconv = t_conv
+        self.shift_time = shift_time 
     
     def GetTime( self, vid, s=0):
         """Get the current time if variable vid, for row self.input_vars.loc[vid,'time_index'] + s,
@@ -799,7 +800,7 @@ class ReadModule(Module):
     def GetVal( self, vid, s=0):
         """Get the current value, for row self.input_vars.loc[vid,'time_index'] + s,
            in the Director units."""
-        vraw = self.data[self.input_vars.loc[vid,'Sheet']].loc[ self.input_vars.loc[vid,'time_index']+s,\
+        vraw = self.data[self.input_vars.loc[vid,'Sheet']].loc[ self.input_vars.loc[vid,'time_index']+s, + self.shift_time \
                        self.input_vars.loc[vid,'Column']]
         return self.input_vars.loc[vid,'Column_conv']*(vraw - self.input_vars.loc[vid,'Column_conv_shift'])
     
