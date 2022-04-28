@@ -1149,6 +1149,7 @@ class Director:
 
 
     def Reset(self):
+        self.ResetVars()
         modules = list(self.Modules.keys())
         for m in modules:
             self.Modules[m].ResetVars()
