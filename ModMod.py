@@ -1160,7 +1160,7 @@ class Director:
            as one module.
            This methods resets local and global variables. 
         """
-        self.Reset()
+        #self.Reset()
         Vars = list(self.Vars.keys())
         for v in Vars:
             self.Vars[v].Reset()
