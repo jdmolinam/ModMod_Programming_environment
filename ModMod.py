@@ -1149,7 +1149,9 @@ class Director:
 
 
     def Reset(self):
-        self.ResetVars()
+        Vars = list(self.Vars.keys())
+        for v in Vars:
+            self.Vars[v].Reset()
         modules = list(self.Modules.keys())
         for m in modules:
             self.Modules[m].ResetVars()
@@ -1166,9 +1168,10 @@ class Director:
             self.Vars[v].Reset()
         Modules = list(self.Modules.keys())
         for m in Modules:
-            RHSs = self.Modules[m].StateRHSs
-            if len(RHSs) != 0:
-                self.X = zeros(self.q)
-                self.F = zeros(self.q)
-                for varid in self.S_RHS_ids:
-                    self.k[varid] = 0.0
+            if isinstance(m, Module):
+                RHSs = self.Modules[m].StateRHSs
+                if len(RHSs) != 0:
+                    self.X = zeros(self.q)
+                    self.F = zeros(self.q)
+                    for varid in self.S_RHS_ids:
+                        self.k[varid] = 0.0
