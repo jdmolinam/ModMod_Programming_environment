@@ -1149,12 +1149,11 @@ class Director:
 
 
     def Reset(self):
-        Vars = list(self.Vars.keys())
-        for v in Vars:
-            self.Vars[v].Reset()
-        modules = list(self.Modules.keys())
-        for m in modules:
-            self.Modules[m].ResetVars()
+        for v_id,v in self.Vars.items():
+            v.Reset()
+        modules = self.Modules
+        for m_id,m in modules.items():
+            m.ResetVars()
 
 
     def ResetVars(self):
@@ -1162,16 +1161,24 @@ class Director:
            as one module.
            This methods resets local and global variables. 
         """
-        #self.Reset()
-        Vars = list(self.Vars.keys())
-        for v in Vars:
-            self.Vars[v].Reset()
-        Modules = list(self.Modules.keys())
-        for m in Modules:
-            if isinstance(m, Module):
-                RHSs = self.Modules[m].StateRHSs
-                if len(RHSs) != 0:
-                    self.X = zeros(self.q)
-                    self.F = zeros(self.q)
-                    for varid in self.S_RHS_ids:
-                        self.k[varid] = 0.0
+        for v_id,v in self.Vars.items():
+            v.Reset()
+        for m_id,m in self.Modules.items():
+            #breakpoint()
+            RHSs =list(m.StateRHSs.values())
+            if len(RHSs) != 0:
+                m.X = zeros(m.q)
+                m.F = zeros(m.q)
+                #breakpoint()
+                for varid in m.S_RHS_ids:
+                    m.k[varid] = 0.0
+                    
+                    
+                    
+                    		
+                    
+                    
+                    
+                    
+                    
+                    
