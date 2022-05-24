@@ -1164,7 +1164,7 @@ class Director:
         for v_id,v in self.Vars.items():
             v.Reset()
         for m_id,m in self.Modules.items():
-            #breakpoint()
+            m.ResetVars()
             RHSs =list(m.StateRHSs.values())
             if len(RHSs) != 0:
                 m.X = zeros(m.q)
