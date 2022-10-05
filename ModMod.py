@@ -24,6 +24,7 @@ from pylab import plot, xlabel, ylabel, title
 from sympy import latex, symbols, simplify
 from tqdm import  tqdm
 from pandas import read_excel
+from progress.bar import Bar
 
 from numpy import format_float_scientific
 def str_ScientificNotation( x, precision=4):
@@ -828,6 +829,7 @@ class Director:
            t0, initial time. State and Cnts dictionary of Var's, Modules dictionary of
            Modules."""
         self.t = t0 ### Time, shared by all modules
+        self.any_nan = 0
         self.AddTimeUnit( time_unit, units_symb)
         self.Vars = Vars #Dictionary of all variables, may be empty
         self.VarClas = {'Cnts':[], 'State':[]} # Variable classification, start with the special names 'Cnts' and 'State'
@@ -1107,8 +1109,7 @@ class Director:
         """Advance in Dt time steps, n steps with the scheduling sch.
            Save the variables with varid's in save.  Defualt: all State variables.
         """
-        from functools import partialmethod
-        tqdm.__init__ = partialmethod(tqdm.__init__, disable=not(active))
+        bar = Bar('Solving...', max = n)
         if save == None:
             self.save = list(self.VarClas['State'])
         else:
@@ -1117,12 +1118,22 @@ class Director:
         self.Output = zeros(( n, 1+len(self.save)))
         self.Output[0,0] = self.t ## Initial time
         self.Output[0,1:] = self.VarToArray( self.save)
-        with tqdm(total=n, position=0) as pbar:
+        if active:
             for i, t1 in enumerate(trange):
                 self.Scheduler(t1, sch)
                 self.Output[i,0] = self.t
                 self.Output[i,1:] = self.VarToArray( self.save)
-                pbar.update(1) 
+                bar.next()
+                if self.any_nan > 0:
+                    break
+        else:
+            for i, t1 in enumerate(trange):
+                self.Scheduler(t1, sch)
+                self.Output[i,0] = self.t
+                self.Output[i,1:] = self.VarToArray( self.save)
+                if self.any_nan > 0:
+                    break
+        bar.finish()
         return self.save
 
     def PlotVar( self, varid):
@@ -1164,7 +1175,7 @@ class Director:
         for v_id,v in self.Vars.items():
             v.Reset()
         for m_id,m in self.Modules.items():
-            m.ResetVars()
+            #breakpoint()
             RHSs =list(m.StateRHSs.values())
             if len(RHSs) != 0:
                 m.X = zeros(m.q)
@@ -1182,3 +1193,4 @@ class Director:
                     
                     
                     
+
