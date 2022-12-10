@@ -27,10 +27,114 @@ from pandas import read_excel
 from progress.bar import Bar
 
 from numpy import format_float_scientific
+from math import sqrt
+
+
+class CooperVerner:
+    def __init__(self):
+        sq21 = sqrt(21)
+        self.b8 = 49/180
+        self.a10_5 = 1/9
+        self.b1 = 1/20
+        self.b2 = 0
+        self.b3 = 0
+        self.b4 = 0
+        self.b5 = 0
+        self.b6 = 0
+        self.b9 = 16/45 
+        self.b10 = 49/180
+        self.b11 = 1/20
+        self.c1 = 0
+        self.c2 = 1/2
+        self.c3 = 1/2
+        self.c4 = (7 + sqrt(21))/14
+        self.c5 = (7 + sqrt(21))/14
+        self.c6 = 1/2
+        self.c7 = (7 - sqrt(21))/14
+        self.c8 = (7 - sqrt(21))/14
+        self.c9 = 1/2
+        self.c10 = (7 + sqrt(21))/14
+        self.c11 = 1.0
+        self.a2_1 = 1/2
+        self.a3_1 = 1/4
+        self.a3_2 = 1/4
+        self.a4_1 = 1/7
+        self.a4_2 = (-7-3*sqrt(21))/98
+        self.a4_3 = (21+5*sqrt(21))/49
+        self.a5_1 = (11+sqrt(21))/84
+        self.a5_2 = 0.0
+        self.a5_3 = (4*sqrt(21))/63 + 2/7 
+        self.a5_4 = (21 - sqrt(21))/252
+        self.a6_1 = (5 + sqrt(21))/48
+        self.a6_2 = 0.0
+        self.a6_3 = (9 + sqrt(21))/36
+        self.a6_4 = (-231 + 14*sqrt(21))/360
+        self.a6_5 = (63 - 7*sqrt(21))/80
+        self.a7_1 = (10-sqrt(21))/42
+        self.a7_2 = 0.0
+        self.a9_1 = 1/32
+        self.a9_2 = 0.0
+        self.a10_1 = 1/14
+        self.a10_2 = 0.0
+        self.a10_9 = (4*sqrt(21))/35 + (132/245)
+        self.a11_1 = 0.0
+        self.a11_2 = 0.0
+        self.a11_9 = (28-28*sqrt(21))/45
+        self.a11_10 = (49-7*sqrt(21))/18
+        #And the others are expressed in terms of b8 and a10_5
+        self.b7 = -self.b8 + 49/180
+        self.a7_3 = -(24/35)*self.a10_5 - 136/105 - (12/245)*self.a10_5*sqrt(21) + (656/2205)*sqrt(21)
+        self.a7_4 = 7-(3/10)*self.a10_5*sq21 - (71/45)*sq21 + (3/10)*self.a10_5
+        self.a7_5 = -(3/10)*self.a10_5 + (3/10)*self.a10_5*sq21 - (43/6) + (169/105)*sq21
+        self.a7_6 = -(277/735)*sq21 + (181/105) + (12/245)*self.a10_5*sq21 + (24/35)*self.a10_5
+        self.a8_1 = -(180*self.b8*sq21 - 49*sq21 - 1800*self.b8 + 343)/(7560*self.b8)
+        self.a8_2 = 0
+        self.a8_5 = -(441*self.a10_5*sq21 - 3240*self.a7_5*self.b8 - 28*sq21 + 882*self.a7_5 - 2205*self.a10_5 + 147)/(3240*self.b8)
+        self.a8_6 = (72*self.a10_5*sq21 + 1620*self.a7_6*self.b8-29*sq21-441*self.a7_6-252*self.a10_5+119)/1620*self.b8
+        self.a8_3 = -(900*self.b8*sq21 + 11340*self.a7_2*self.b8 + 11340*self.a8_6*self.b8 - 98*sq21 - 3087*self.a7_2-4860*self.b8 + 686)/11340*self.b8
+        self.a8_7 = (49/1620)*self.b8
+        self.a8_4 = ((self.c8**2/2) -self.a8_2*self.c2 - self.a8_3*self.c3 - self.a8_5*self.c5 - self.a8_6*self.c6 - self.a8_7*self.c7 )/self.c4
+        self.a9_3 = (1/8)*self.a10_5*sq21 - (1/8)*self.a10_5 - (1/72)*sq21 + (1/72)
+        self.a9_4 = -(49/288) - (7/32)*self.a10_5*sq21 + (7/288)*sq21  + (49/32)*self.a10_5 
+        self.a9_5 = (7/32)*self.a10_5*sq21 - (35/576)*sq21 - (49/32)*self.a10_5 + (21/64)
+        self.a9_6 = -(1/8)*self.a10_5*sq21 + (1/8)*self.a10_5 + (1/72)*sq21 + (5/36)
+        self.a9_7 = (91/576) + (7/192)*sq21 - (585/1568)*self.b8*sq21 - (405/224)*self.b8
+        self.a9_8 = (585/1568)*self.b8*sq21 + (405/224)*self.b8
+        self.a10_3 = -(6/49)*self.a10_5*sq21 - (2/7)*self.a10_5 + (2/147)*sq21 + (2/63)
+        self.a10_4 = (1/9) - self.a10_5
+        self.a10_6 = (2/7)*self.a10_5 - (803/2205) + (6/49)*self.a10_5*sq21 - (59/735)*sq21
+        self.a10_7 = (1/9) + (1/42)*sq21 + (2295/686)*self.b8 + (495/686)*self.b8*sq21
+        self.a10_8 = -(2295/686)*self.b8 - (495/686)*self.b6*sq21 
+        self.a11_3 = (2/3)*self.a10_5*sq21 - (2/3)*self.a10_5 - 2/27*sq21 + 2/27
+        self.a11_4 = -(7/6)*self.a10_5*sq21 + (7/54)*sq21 + (49/6) *self.a10_5 - 49/54
+        self.a11_5 = (7/27)*sq21 - (77/54) - (49/6)*self.a10_5 + (7/6)*self.a10_5*sq21
+        self.a11_6 = (2/3)*self.a10_5 - (64/135) - (2/3) *self.a10_5*sq21 + (94/135)*sq21
+        self.a11_7 = (7/18) - (265/98)*self.b8*sq21 - (215/14)*self.b6
+        self.a11_8 = (265/98)*self.b8*sq21 + (215/14)*self.b8
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 def str_ScientificNotation( x, precision=4):
     """Wrapper for format_float_scientific with fixed str size depending on precision."""
     return ("{:>%d}" % (8+precision,)).format(\
            format_float_scientific( x, precision=precision, trim='0', exp_digits=3))
+
+cv = CooperVerner()
 
 # Butcher Tableau of RK methods, as described in
 # https://en.wikipedia.org/wiki/Runge%E2%80%93Kutta_methods
@@ -57,7 +161,33 @@ RKcoef = ( \
                    array([ 3.0/10, -9.0/10, 6.0/5]),\
                    array([-11.0/54, 5.0/2, -70.0/27, 35.0/27]),\
                    array([ 1631.0/55296, 175.0/512, 575.0/13824, 44275.0/110592, 253.0/4096])],\
-               'E':array([-0.00429377, 0.0, 0.01866859, -0.03415503, -0.01932199,0.0391022 ])})
+               'E':array([-0.00429377, 0.0, 0.01866859, -0.03415503, -0.01932199,0.0391022 ])},
+        { 'Method':5, 'Ord':5,'name':'Dormand-Prince', 's':7, 'ErrorEst':False, \
+                'c':array([0, 1.0/5, 3.0/10, 4.0/5,8.0/9, 1.0, 1.0 ]),
+                'b':array([35.0/384, 0.0, 500.0/1113, 125.0/192, -2187.0/6784, 11.0/84, 0.0]),
+                'a':[array([]), \
+                     array([1.0/5]),\
+                     array([3.0/40      ,  9.0/40])    ,\
+                     array([44.0/45     , -56.0/15     , 32.0/9])    ,\
+                     array([19372.0/6561, -25360.0/2187, 64448.0/6561, -212.0/729]),\
+                     array([9017.0/3168 , -355/33      , 46732/5247  , 49/176      , -5103/18656]),\
+                     array([35.0/384    ,  0           , 500.0/1113  , 125.0/192   , -2187/6784   , 11.0/84])]},
+
+        { 'Method':6, 'Ord':8,'name':'Cooper-Verner', 's':11,'ErrorEst':False, \
+                'c':array([eval(f'cv.c{i}') for i in range(1,12)]),\
+                'b':array([eval(f'cv.b{i}') for i in range(1,12)]),\
+                'a':[array([]), \
+                     array([eval(f'cv.a2_{i}')  for i in range(1,2)]),\
+                     array([eval(f'cv.a3_{i}')  for i in range(1,3)]),\
+                     array([eval(f'cv.a4_{i}')  for i in range(1,4)]),\
+                     array([eval(f'cv.a5_{i}')  for i in range(1,5)]),\
+                     array([eval(f'cv.a6_{i}')  for i in range(1,6)]),\
+                     array([eval(f'cv.a7_{i}')  for i in range(1,7)]),\
+                     array([eval(f'cv.a8_{i}')  for i in range(1,8)]),\
+                     array([eval(f'cv.a9_{i}')  for i in range(1,9)]),\
+                     array([eval(f'cv.a10_{i}') for i in range(1,10)]),\
+                     array([eval(f'cv.a11_{i}') for i in range(1,11)])]}
+        )
 
 def TranslateArgNames(func):
     """From a regular function, translate its var names to be called
